@@ -33,7 +33,7 @@ pub fn eval<const RULE_SIZE: usize>(
     keyboard
 }
 
-pub fn build_keyboard_report(
+fn build_keyboard_report(
     emit: Emit<Keyb>,
     identity: Emit<Keyb>,
     first: &Key,

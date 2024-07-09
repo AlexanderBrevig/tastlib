@@ -48,6 +48,8 @@ mod unformatted {
     chord!( L_ALLMOD,       4, [On(L_A), On(L_S), On(L_C), RAny],   Ctrl(&Alt(&Shift(&Identity))));
 
 
+    chord!(TAB_SPC_ESC,   1, [Both(TAB, SPC)], Code(Keyb::Escape));
+
     // Tab layer (shift)
     chord!(TAB_SHIFT,     2, [On(TAB), Any], Shift(&Identity));
 
@@ -153,7 +155,7 @@ mod unformatted {
     chord!(ON_DOT,             1, [On(DOT)],          Code(Keyb::Dot));
     chord!(ON_FORWARDSLASH,    1, [On(FORWARDSLASH)], Code(Keyb::ForwardSlash));
 
-    pub const RULES: [ChordEmit<Keyboard>; 110] = [
+    pub const RULES: [ChordEmit<Keyboard>; 111] = [
         R_GUI,
         R_ALT,
         R_SHIFT,
@@ -176,6 +178,7 @@ mod unformatted {
         L_CTRL_ALT,
         L_CTRL_SHIFT,
         L_ALLMOD,
+        TAB_SPC_ESC,
         TAB_SHIFT,
         BCK_AE,
         BCK_OE,
