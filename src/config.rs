@@ -1,21 +1,21 @@
 use tastlib::alias;
 use tastlib::parse::ChordEvent::*;
 
-alias!(TAB, L16);
-alias!(BCK, L17);
-alias!(RET, R17);
-alias!(SPC, R16);
+alias!(TAB, Left, K16);
+alias!(BCK, Left, K17);
+alias!(RET, Right, K17);
+alias!(SPC, Right, K16);
 
 // Homerow mods left
-alias!(L_G, L6); //GUI/WIN/COMMAND
-alias!(L_A, L7); //ALT/OPTION
-alias!(L_S, L8);
-alias!(L_C, L9);
+alias!(L_G, Left, K6); //GUI/WIN/COMMAND
+alias!(L_A, Left, K7); //ALT/OPTION
+alias!(L_S, Left, K8);
+alias!(L_C, Left, K9);
 // Homerow mods right
-alias!(R_G, R6);
-alias!(R_A, R7);
-alias!(R_S, R8);
-alias!(R_C, R9);
+alias!(R_G, Right, K6);
+alias!(R_A, Right, K7);
+alias!(R_S, Right, K8);
+alias!(R_C, Right, K9);
 
 #[rustfmt::skip]
 mod unformatted {

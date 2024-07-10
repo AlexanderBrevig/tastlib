@@ -39,7 +39,8 @@ macro_rules! chord {
 }
 #[macro_export]
 macro_rules! alias {
-    ($alias:ident, $key:ident) => {
-        pub const $alias: $crate::lex::Pressed = $crate::lex::Pressed($crate::lex::Key::$key);
+    ($alias:ident, $side:ident, $key:ident) => {
+        pub const $alias: $crate::lex::Pressed =
+            $crate::lex::Pressed($crate::lex::Key::$side($crate::lex::KeyId::$key));
     };
 }

@@ -1,7 +1,7 @@
 use heapless::Vec;
 use k_board::{keyboard::Keyboard, keys::Keys};
 use tastlib::{
-    lex::{Event, Key, STACK_SIZE},
+    lex::{Event, Key, KeyId, STACK_SIZE},
     report::eval,
 };
 
@@ -50,40 +50,43 @@ fn sim(key: Key, toggler: &mut bool, stack: &mut Vec<Event, 128>) {
 }
 
 fn spc_sim(toggler: &mut bool, stack: &mut Vec<Event, 128>) {
-    sim(Key::R16, toggler, stack);
+    sim(Key::Right(KeyId::K16), toggler, stack);
 }
 
 fn ret_sim(toggler: &mut bool, stack: &mut Vec<Event, 128>) {
-    sim(Key::R17, toggler, stack);
+    sim(Key::Right(KeyId::K17), toggler, stack);
 }
 
 fn bck_sim(toggler: &mut bool, stack: &mut Vec<Event, 128>) {
-    sim(Key::L17, toggler, stack);
+    sim(Key::Left(KeyId::K17), toggler, stack);
 }
 
 fn tab_sim(toggler: &mut bool, stack: &mut Vec<Event, 128>) {
-    sim(Key::L16, toggler, stack);
+    sim(Key::Left(KeyId::K16), toggler, stack);
 }
 
 #[rustfmt::skip]
 fn from_char_to_event(value: char) -> Event {
     use tastlib::lex::Event::Down as D;
     use tastlib::lex::Event::Up as U;
+    use tastlib::lex::Key::Left as L;
+    use tastlib::lex::Key::Right as R;
+    use tastlib::lex::KeyId::*;
     match value {
         // DOWN
-        'Q' => D(Key::L1), 'W' => D(Key::L2), 'E' => D(Key::L3), 'R' => D(Key::L4), 'T' => D(Key::L5),
-        'A' => D(Key::L6), 'S' => D(Key::L7), 'D' => D(Key::L8), 'F' => D(Key::L9), 'G' => D(Key::L10),
-        'Z' => D(Key::L11), 'X' => D(Key::L12), 'C' => D(Key::L13), 'V' => D(Key::L14), 'B' => D(Key::L15),
-        'Y' => D(Key::R5), 'U' => D(Key::R4), 'I' => D(Key::R3), 'O' => D(Key::R2), 'P' => D(Key::R1),
-        'H' => D(Key::R10), 'J' => D(Key::R9), 'K' => D(Key::R8), 'L' => D(Key::R7), ':' => D(Key::R6),
-        'N' => D(Key::R15), 'M' => D(Key::R14), '<' => D(Key::R13), '>' => D(Key::R12), '?' => D(Key::R11),
+        'Q' => D(L(K1)), 'W' => D(L(K2)), 'E' => D(L(K3)), 'R' => D(L(K4)), 'T' => D(L(K5)),
+        'A' => D(L(K6)), 'S' => D(L(K7)), 'D' => D(L(K8)), 'F' => D(L(K9)), 'G' => D(L(K10)),
+        'Z' => D(L(K11)), 'X' => D(L(K12)), 'C' => D(L(K13)), 'V' => D(L(K14)), 'B' => D(L(K15)),
+        'Y' => D(R(K5)), 'U' => D(R(K4)), 'I' => D(R(K3)), 'O' => D(R(K2)), 'P' => D(R(K1)),
+        'H' => D(R(K10)), 'J' => D(R(K9)), 'K' => D(R(K8)), 'L' => D(R(K7)), ':' => D(R(K6)),
+        'N' => D(R(K15)), 'M' => D(R(K14)), '<' => D(R(K13)), '>' => D(R(K12)), '?' => D(R(K11)),
         // UP
-        'q' => U(Key::L1), 'w' => U(Key::L2), 'e' => U(Key::L3), 'r' => U(Key::L4), 't' => U(Key::L5),
-        'a' => U(Key::L6), 's' => U(Key::L7), 'd' => U(Key::L8), 'f' => U(Key::L9), 'g' => U(Key::L10),
-        'z' => U(Key::L11), 'x' => U(Key::L12), 'c' => U(Key::L13), 'v' => U(Key::L14), 'b' => U(Key::L15),
-        'y' => U(Key::R5), 'u' => U(Key::R4), 'i' => U(Key::R3), 'o' => U(Key::R2), 'p' => U(Key::R1),
-        'h' => U(Key::R10), 'j' => U(Key::R9), 'k' => U(Key::R8), 'l' => U(Key::R7), ';' => U(Key::R6),
-        'n' => U(Key::R15), 'm' => U(Key::R14), ',' => U(Key::R13), '.' => U(Key::R12), '/' => U(Key::R11),
+        'q' => U(L(K1)), 'w' => U(L(K2)), 'e' => U(L(K3)), 'r' => U(L(K4)), 't' => U(L(K5)),
+        'a' => U(L(K6)), 's' => U(L(K7)), 'd' => U(L(K8)), 'f' => U(L(K9)), 'g' => U(L(K10)),
+        'z' => U(L(K11)), 'x' => U(L(K12)), 'c' => U(L(K13)), 'v' => U(L(K14)), 'b' => U(L(K15)),
+        'y' => U(R(K5)), 'u' => U(R(K4)), 'i' => U(R(K3)), 'o' => U(R(K2)), 'p' => U(R(K1)),
+        'h' => U(R(K10)), 'j' => U(R(K9)), 'k' => U(R(K8)), 'l' => U(R(K7)), ';' => U(R(K6)),
+        'n' => U(R(K15)), 'm' => U(R(K14)), ',' => U(R(K13)), '.' => U(R(K12)), '/' => U(R(K11)),
         _ => todo!("Key {} not implemented yet", value),
     }
 }
@@ -117,10 +120,10 @@ mod tests {
     #[test]
     fn test_copy() {
         let mut stack: Vec<Event, STACK_SIZE> = Vec::new();
-        stack.push(Down(F.into())).unwrap();
+        stack.push(Down(J.into())).unwrap();
         stack.push(Down(C.into())).unwrap();
         stack.push(Up(C.into())).unwrap();
-        stack.push(Up(F.into())).unwrap();
+        stack.push(Up(J.into())).unwrap();
 
         let keyboard = eval(&mut stack, &config::RULES);
         assert_eq!(Keyb::RightControl, keyboard[0]);

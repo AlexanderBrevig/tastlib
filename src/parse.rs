@@ -1,4 +1,4 @@
-use crate::lex::{Pressed, PRESS_SIZE};
+use crate::lex::{Key, Pressed, PRESS_SIZE};
 use heapless::Vec;
 
 #[derive(Debug, Clone, Copy)]
@@ -66,13 +66,13 @@ fn rule_match(chord: &Vec<Pressed, PRESS_SIZE>, rule_events: &[ChordEvent]) -> b
             }
             ChordEvent::RAny => {
                 let Pressed(key) = chord[ix];
-                if !key.is_right() {
+                if let Key::Left(_) = key {
                     return false;
                 }
             }
             ChordEvent::LAny => {
                 let Pressed(key) = chord[ix];
-                if !key.is_left() {
+                if let Key::Right(_) = key {
                     return false;
                 }
             }
@@ -100,7 +100,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        lex::{qwerty::*, PRESS_SIZE},
+        lex::{qwerty::*, KeyId, PRESS_SIZE},
         parse::{
             ChordEmit,
             ChordEvent::{self, *},
@@ -124,9 +124,9 @@ mod tests {
         ChordEmit(&W_STRING_EVENTS, Ctrl(&Shift(&String("Hello World"))));
 
     const OPT_CTRL_R1_EVENTS: [ChordEvent; 3] = [
-        Optional(&On(Pressed(crate::lex::Key::L16))),
-        On(Pressed(crate::lex::Key::L9)),
-        On(Pressed(crate::lex::Key::R1)),
+        Optional(&On(Pressed(Key::Left(KeyId::K16)))),
+        On(Pressed(Key::Left(KeyId::K9))),
+        On(Pressed(Key::Right(KeyId::K1))),
     ];
     const OPT_CTRL_R1: ChordEmit<Keyboard> =
         ChordEmit(&OPT_CTRL_R1_EVENTS, Ctrl(&String("Optional")));
@@ -182,10 +182,13 @@ mod tests {
 
     #[test]
     fn optional_chord() {
-        use crate::lex::Key::{L16, L17, L9};
         let mut chord: Vec<Pressed, PRESS_SIZE> = Vec::new();
         chord
-            .extend_from_slice(&[Pressed(L16), Pressed(L9), P])
+            .extend_from_slice(&[
+                Pressed(Key::Left(KeyId::K16)),
+                Pressed(Key::Left(KeyId::K9)),
+                P,
+            ])
             .unwrap();
 
         let emit = parse_with(&chord, &RULES);
@@ -193,7 +196,11 @@ mod tests {
 
         chord.clear();
         chord
-            .extend_from_slice(&[Pressed(L17), Pressed(L9), P])
+            .extend_from_slice(&[
+                Pressed(Key::Left(KeyId::K17)),
+                Pressed(Key::Left(KeyId::K9)),
+                P,
+            ])
             .unwrap();
 
         let emit = parse_with(&chord, &RULES);

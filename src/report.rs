@@ -50,7 +50,7 @@ fn build_keyboard_report_modifiers(
 ) -> Emit<Keyb> {
     match emit {
         Emit::Mod(next) => {
-            if first.is_left() {
+            if let Key::Left(_) = first {
                 keyboard.push(Keyb::LeftGUI).unwrap();
             } else {
                 keyboard.push(Keyb::RightGUI).unwrap();
@@ -58,7 +58,7 @@ fn build_keyboard_report_modifiers(
             build_keyboard_report_modifiers(*next, first, keyboard)
         }
         Emit::Alt(next) => {
-            if first.is_left() {
+            if let Key::Left(_) = first {
                 keyboard.push(Keyb::LeftAlt).unwrap();
             } else {
                 keyboard.push(Keyb::RightAlt).unwrap();
@@ -66,7 +66,7 @@ fn build_keyboard_report_modifiers(
             build_keyboard_report_modifiers(*next, first, keyboard)
         }
         Emit::Shift(next) => {
-            if first.is_left() {
+            if let Key::Left(_) = first {
                 keyboard.push(Keyb::LeftShift).unwrap();
             } else {
                 keyboard.push(Keyb::RightShift).unwrap();
@@ -74,7 +74,7 @@ fn build_keyboard_report_modifiers(
             build_keyboard_report_modifiers(*next, first, keyboard)
         }
         Emit::Ctrl(next) => {
-            if first.is_left() {
+            if let Key::Left(_) = first {
                 keyboard.push(Keyb::LeftControl).unwrap();
             } else {
                 keyboard.push(Keyb::RightControl).unwrap();
@@ -124,6 +124,7 @@ fn build_keyboard_report_identity(
 
 #[cfg(test)]
 mod tests {
+    use crate::lex::KeyId;
     use crate::parse::Emit::*;
     use crate::{
         lex::{Key, REPORT_SIZE},
@@ -174,7 +175,7 @@ mod tests {
     fn test_report_modifiers_left() {
         let mut keyboard: Vec<Keyb, REPORT_SIZE> = Vec::new();
         let emit = Emit::Shift(&Emit::Identity);
-        let first = &crate::lex::Key::L8;
+        let first = &crate::lex::Key::Left(KeyId::K8);
         let emit = build_keyboard_report_modifiers(emit, first, &mut keyboard);
         assert_eq!(Keyb::LeftShift, keyboard[0]);
         assert_eq!(Emit::Identity, emit);
@@ -184,7 +185,7 @@ mod tests {
     fn test_report_modifiers_right() {
         let mut keyboard: Vec<Keyb, REPORT_SIZE> = Vec::new();
         let emit = Emit::Ctrl(&Emit::Identity);
-        let first = &crate::lex::Key::R8;
+        let first = &crate::lex::Key::Right(KeyId::K8);
         let emit = build_keyboard_report_modifiers(emit, first, &mut keyboard);
         assert_eq!(Keyb::RightControl, keyboard[0]);
         assert_eq!(Emit::Identity, emit);
@@ -194,7 +195,7 @@ mod tests {
     fn test_build_keyboard_report_shift() {
         let mut keyboard: Vec<Keyb, REPORT_SIZE> = Vec::new();
         let emit = Emit::Shift(&Emit::Identity);
-        let first = &Key::R6; // right gui
+        let first = &Key::Right(KeyId::K6); // right gui
         let identity = Emit::Code(Keyb::Keyboard1);
         build_keyboard_report(emit, identity, first, &mut keyboard);
         assert_eq!(Keyb::RightShift, keyboard[0]);
@@ -205,7 +206,7 @@ mod tests {
     fn test_build_keyboard_report_god() {
         let mut keyboard: Vec<Keyb, REPORT_SIZE> = Vec::new();
         let emit = Mod(&Ctrl(&Alt(&Shift(&Emit::Identity))));
-        let first = &Key::R6; // right gui
+        let first = &Key::Right(KeyId::K6); // right gui
         let identity = Emit::Code(Keyb::Q);
         build_keyboard_report(emit, identity, first, &mut keyboard);
         assert_eq!(Keyb::RightGUI, keyboard[0]);
